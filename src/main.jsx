@@ -17,7 +17,6 @@ createRoot(document.getElementById("root")).render(
           <Route element={<RegisterPage />} path="/register" />
           <Route element={<LoginPage />} path="/login" />
           <Route element={<Home />} path="/" />
-          <Route element={<Home2 />} path="/2" />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

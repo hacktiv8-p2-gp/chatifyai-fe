@@ -11,10 +11,16 @@ import {
   faCheckDouble,
   faSun,
   faMoon,
+  faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { ThemeContext } from "../Contexts/ThemeContext";
+import useAuthStore from "../data/AuthData";
+import { useNavigate } from "react-router";
 
 function Home() {
+  const navigate = useNavigate();
+
+  const { clearUser } = useAuthStore();
   const { toggleTheme, theme, isDarkMode } = useContext(ThemeContext);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [messageInput, setMessageInput] = useState("");
@@ -78,6 +84,11 @@ function Home() {
     }
   };
 
+  const handleLogout = () => {
+    clearUser();
+    navigate("/login");
+  };
+
   return (
     <Container
       fluid
@@ -113,6 +124,21 @@ function Home() {
             }}
           >
             <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />
+          </Button>
+
+          <Button
+            onClick={handleLogout}
+            style={{
+              backgroundColor: theme.cardBackground,
+              border: `1px solid ${theme.borderColor}`,
+              color: theme.color,
+              borderRadius: "50%",
+              padding: "10px",
+              width: "40px",
+              height: "40px",
+            }}
+          >
+            <FontAwesomeIcon icon={faSignOutAlt} />
           </Button>
         </Col>
       </Row>

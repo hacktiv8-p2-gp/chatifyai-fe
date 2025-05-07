@@ -7,7 +7,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Route, Routes } from "react-router";
 import LoginPage from "./Pages/LoginPage.jsx";
 import Home from "./Pages/Home.jsx";
-import Home2 from "./Pages/Home2.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

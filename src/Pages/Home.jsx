@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Container, Row, Col, ListGroup, Button, Card } from "react-bootstrap";
+import { Container, Row, Col, Button, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faComments,
@@ -7,20 +7,13 @@ import {
   faUser,
   faCheck,
   faCheckDouble,
-  faSun,
-  faMoon,
-  faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { ThemeContext } from "../Contexts/ThemeContext";
-import useAuthStore from "../data/AuthData";
-import { useNavigate } from "react-router";
-import { AddFriend } from "../Components/AddFriend";
+import { Navbar } from "../Components/Navbar";
+import { Sidebar } from "../Components/Sidebar";
 
 function Home() {
-  const navigate = useNavigate();
-
-  const { clearUser } = useAuthStore();
-  const { toggleTheme, theme, isDarkMode } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [messageInput, setMessageInput] = useState("");
   const [messages, setMessages] = useState([
@@ -52,11 +45,6 @@ function Home() {
     },
   ]);
 
-  const friends = [
-    { id: 1, name: "John Doe", status: "online" },
-    { id: 2, name: "Jane Smith", status: "offline" },
-  ];
-
   const handleSendMessage = () => {
     if (!messageInput.trim()) return;
 
@@ -82,11 +70,6 @@ function Home() {
     }
   };
 
-  const handleLogout = () => {
-    clearUser();
-    navigate("/login");
-  };
-
   return (
     <Container
       fluid
@@ -97,115 +80,14 @@ function Home() {
       }}
     >
       {/* Header with Theme Toggle */}
-      <Row
-        style={{
-          backgroundColor: theme.cardBackground,
-          padding: "10px 20px",
-          borderBottom: `1px solid ${theme.borderColor}`,
-        }}
-        className="align-items-center"
-      >
-        <Col>
-          <h4 style={{ margin: 0, color: theme.color }}>Chatify</h4>
-        </Col>
-        <Col className="text-end">
-          <Button
-            onClick={toggleTheme}
-            style={{
-              backgroundColor: theme.cardBackground,
-              border: `1px solid ${theme.borderColor}`,
-              color: theme.color,
-              borderRadius: "50%",
-              padding: "10px",
-              width: "40px",
-              height: "40px",
-            }}
-          >
-            <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />
-          </Button>
-
-          <Button
-            onClick={handleLogout}
-            style={{
-              backgroundColor: theme.cardBackground,
-              border: `1px solid ${theme.borderColor}`,
-              color: theme.color,
-              borderRadius: "50%",
-              padding: "10px",
-              width: "40px",
-              height: "40px",
-            }}
-          >
-            <FontAwesomeIcon icon={faSignOutAlt} />
-          </Button>
-        </Col>
-      </Row>
+      <Navbar />
 
       <Row className="h-100">
         {/* Sidebar */}
-        <Col
-          md={4}
-          lg={3}
-          className="p-0"
-          style={{
-            height: "100vh",
-            borderRight: `1px solid ${theme.borderColor}`,
-            backgroundColor: theme.cardBackground,
-          }}
-        >
-          <Card
-            className="h-100 border-0"
-            style={{
-              height: "100vh",
-              backgroundColor: theme.cardBackground,
-            }}
-          >
-            <Card.Header
-              style={{
-                backgroundColor: theme.borderColor,
-                color: theme.color,
-              }}
-            >
-              <AddFriend />
-            </Card.Header>
-            <Card.Body className="p-0">
-              <ListGroup variant="flush">
-                {friends.map((friend) => (
-                  <ListGroup.Item
-                    key={friend.id}
-                    action
-                    active={selectedFriend?.id === friend.id}
-                    onClick={() => setSelectedFriend(friend)}
-                    style={{
-                      cursor: "pointer",
-                      backgroundColor: theme.cardBackground,
-                      color: theme.color,
-                      borderBottom: `1px solid ${theme.borderColor}`,
-                    }}
-                  >
-                    <div className="d-flex align-items-center">
-                      <span
-                        style={{
-                          backgroundColor: theme.borderColor,
-                          color: theme.color,
-                          padding: "8px",
-                          borderRadius: "50%",
-                          marginRight: "10px",
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faUser} />
-                      </span>
-                      <div className="d-flex justify-content-between align-items-center w-100">
-                        <span>{friend.name}</span>
-                      </div>
-                    </div>
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-            </Card.Body>
-          </Card>
-        </Col>
-
+        <Sidebar
+          selectedFriend={selectedFriend}
+          setSelectedFriend={setSelectedFriend}
+        />
         {/* Chat Area */}
         <Col md={8} lg={9} className="p-0">
           {selectedFriend ? (

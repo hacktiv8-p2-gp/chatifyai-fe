@@ -29,7 +29,7 @@ export default function LoginPage() {
     try {
       const { user } = await login(email, password);
 
-      console.log(await user.getIdToken());
+      console.log(user.getIdToken());
       setCurrentUser(user);
     } catch (e) {
       console.log(e);

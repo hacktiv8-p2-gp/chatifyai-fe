@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
-import { Container, Form, Button, Card, Alert } from "react-bootstrap";
+import React from "react";
+import { Container, Form, Button, Card } from "react-bootstrap";
 import { Link, useNavigate } from "react-router";
 import useAuthStore from "../data/AuthData";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { RegisterForm } from "../Components/RegisterForm";
 
 const registerSchema = z
   .object({
@@ -61,74 +62,13 @@ export default function RegisterPage() {
         <Card.Body>
           <Card.Title className="text-center mb-4">Register</Card.Title>
 
-          <Form onSubmit={handleSubmit(onSubmit)}>
-            <Form.Group className="mb-3">
-              <Form.Label>Email address</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                placeholder="Enter email"
-                disabled={isSubmitting}
-                required
-                {...register("email")}
-              />
-
-              {errors.email && (
-                <Form.Text className="text-danger">
-                  {errors.email.message}
-                </Form.Text>
-              )}
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                name="password"
-                placeholder="Password"
-                required
-                disabled={isSubmitting}
-                {...register("password")}
-              />
-
-              {errors.password && (
-                <Form.Text className="text-danger">
-                  {errors.password.message}
-                </Form.Text>
-              )}
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                required
-                disabled={isSubmitting}
-                {...register("confirmPassword")}
-              />
-
-              {errors.confirmPassword && (
-                <Form.Text className="text-danger">
-                  {errors.confirmPassword.message}
-                </Form.Text>
-              )}
-            </Form.Group>
-
-            <Button
-              variant="primary"
-              type="submit"
-              className="w-100 mb-3"
-              disabled={isSubmitting}
-            >
-              Register
-            </Button>
-
-            <div className="text-center">
-              Already have an account? <Link to="/login">Login here</Link>
-            </div>
-          </Form>
+          <RegisterForm
+            handleSubmit={handleSubmit}
+            onSubmit={onSubmit}
+            isSubmitting={isSubmitting}
+            register={register}
+            errors={errors}
+          />
         </Card.Body>
       </Card>
     </Container>

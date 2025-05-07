@@ -77,21 +77,30 @@ function Home() {
     <Container
       fluid
       style={{
-        height: "100vh",
+        height: "100vh", // Tinggi penuh layar
+        display: "flex", // Gunakan flexbox
+        flexDirection: "column", // Tata letak vertikal
         backgroundColor: theme.background,
         color: theme.color,
       }}
     >
       <Header />
 
-      <Row className="h-100">
+      <Row
+        className="h-100"
+        style={{
+          overflow: "hidden", // Mencegah overflow
+        }}
+      >
         {/* Sidebar */}
         <Col
           md={4}
           lg={3}
           className="p-0"
           style={{
-            height: "100vh",
+            height: "100%", // Tinggi penuh
+            overflowY: "auto", // Scroll jika konten terlalu panjang
+
             borderRight: `1px solid ${theme.borderColor}`,
             backgroundColor: theme.cardBackground,
           }}
@@ -153,6 +162,9 @@ function Home() {
                 style={{
                   backgroundColor: theme.borderColor,
                   color: theme.color,
+                  position: "sticky", // Tetap terlihat di bagian bawah
+                  bottom: 0, // Posisi di bawah
+                  zIndex: 10,
                 }}
               >
                 <div className="d-flex">

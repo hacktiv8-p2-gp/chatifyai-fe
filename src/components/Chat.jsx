@@ -63,7 +63,7 @@ export default function Chat({ messages, isLoading }) {
           </div>
         ))
       ) : (
-        <p>No messages available</p>
+        ""
       )}
     </Card.Body>
   );

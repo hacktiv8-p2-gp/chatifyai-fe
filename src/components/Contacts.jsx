@@ -1,22 +1,38 @@
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext } from "react";
 import { Card, ListGroup, Spinner } from "react-bootstrap";
 import { ThemeContext } from "../Contexts/ThemeContext";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxios from "../hooks/useAxios";
 import { getAll } from "../server/FriendServer";
 import LoadingSpinner from "./Spinner";
+import { deleteFriend } from "../server/FriendServer"; // Import fungsi deleteFriend
 
 export default function Contacts({ setSelectedRoom }) {
   const axios = useAxios();
   const { theme } = useContext(ThemeContext);
+  const queryClient = useQueryClient();
 
   const { data: friends, isLoading } = useQuery({
     queryFn: () => getAll(axios),
     queryKey: ["contacts"],
     enabled: !!axios,
   });
+
+  const mutation = useMutation({
+    mutationFn: (friendId) => deleteFriend(axios, friendId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["contacts"]); // Refresh daftar teman setelah penghapusan
+      setSelectedRoom(null);
+    },
+  });
+
+  const handleDelete = (friendId) => {
+    if (window.confirm("Are you sure you want to delete this friend?")) {
+      mutation.mutate(friendId);
+    }
+  };
 
   return (
     <Card.Body className="p-0">
@@ -36,21 +52,29 @@ export default function Contacts({ setSelectedRoom }) {
                 borderBottom: `1px solid ${theme.borderColor}`,
               }}
             >
-              <div className="d-flex align-items-center">
-                <span
-                  style={{
-                    backgroundColor: theme.borderColor,
-                    color: theme.color,
-                    padding: "8px",
-                    borderRadius: "50%",
-                    marginRight: "10px",
-                  }}
+              <div className="d-flex align-items-center justify-content-between">
+                <div
+                  className="d-flex align-items-center"
+                  onClick={() => setSelectedRoom(friend)}
                 >
-                  <FontAwesomeIcon icon={faUser} />
-                </span>
-                <div className="d-flex justify-content-between align-items-center w-100">
+                  <span
+                    style={{
+                      backgroundColor: theme.borderColor,
+                      color: theme.color,
+                      padding: "8px",
+                      borderRadius: "50%",
+                      marginRight: "10px",
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faUser} />
+                  </span>
                   <span>{friend.friend?.email}</span>
                 </div>
+                <FontAwesomeIcon
+                  icon={faTrash}
+                  style={{ cursor: "pointer", color: theme.color }}
+                  onClick={() => handleDelete(friend.roomId)}
+                />
               </div>
             </ListGroup.Item>
           ))

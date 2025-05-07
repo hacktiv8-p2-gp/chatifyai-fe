@@ -18,3 +18,8 @@ export async function request(axios, email) {
 
   return response.data.data;
 }
+
+export const deleteFriend = async (axios, roomId) => {
+  const response = axios.delete(`${BASE_URL}/api/friends/delete/${roomId}`);
+  return response.data;
+};

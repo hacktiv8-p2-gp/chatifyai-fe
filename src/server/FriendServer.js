@@ -1,18 +1,16 @@
-const BASE_URL = "http://localhost:3000";
-
 export async function getAll(axios) {
-  const response = await axios.get(`${BASE_URL}/api/friends`);
+  const response = await axios.get(`/api/friends`);
   return response.data.data;
 }
 
 export async function get(axios, email) {
-  // console.log(email);
-  const response = await axios.get(`${BASE_URL}/api/friends/${email}`);
+  console.log(email);
+  const response = await axios.get(`/api/friends/${email}`);
   // console.log(response);
   return response.data.data;
 }
 export async function request(axios, email) {
-  const response = await axios.post(`${BASE_URL}/api/friends/request`, {
+  const response = await axios.post(`/api/friends/request`, {
     email,
   });
 
@@ -20,6 +18,6 @@ export async function request(axios, email) {
 }
 
 export const deleteFriend = async (axios, roomId) => {
-  const response = axios.delete(`${BASE_URL}/api/friends/delete/${roomId}`);
+  const response = axios.delete(`/api/friends/delete/${roomId}`);
   return response.data;
 };

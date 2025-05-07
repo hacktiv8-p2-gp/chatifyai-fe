@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Col, Button, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,8 +10,38 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { ThemeContext } from "../Contexts/ThemeContext";
 
-export const ChatArea = ({ selectedFriend, messages, messageInput }) => {
+export const ChatArea = ({ selectedFriend }) => {
   const { theme } = useContext(ThemeContext);
+
+  const [messageInput, setMessageInput] = useState("");
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      text: "Hey, how are you?",
+      sender: "me",
+      timestamp: "10:00 AM",
+      status: "read",
+    },
+    {
+      id: 2,
+      text: "I'm good, thanks! How about you?",
+      sender: "friend",
+      timestamp: "10:01 AM",
+    },
+    {
+      id: 3,
+      text: "Great! Want to grab coffee later?",
+      sender: "me",
+      timestamp: "10:02 AM",
+      status: "sent",
+    },
+    {
+      id: 4,
+      text: "Sure, that sounds good!",
+      sender: "friend",
+      timestamp: "10:03 AM",
+    },
+  ]);
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {

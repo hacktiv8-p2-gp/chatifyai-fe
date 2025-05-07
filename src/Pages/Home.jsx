@@ -8,35 +8,6 @@ import { ChatArea } from "../Components/ChatArea";
 function Home() {
   const { theme } = useContext(ThemeContext);
   const [selectedFriend, setSelectedFriend] = useState(null);
-  const [messageInput, setMessageInput] = useState("");
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "Hey, how are you?",
-      sender: "me",
-      timestamp: "10:00 AM",
-      status: "read",
-    },
-    {
-      id: 2,
-      text: "I'm good, thanks! How about you?",
-      sender: "friend",
-      timestamp: "10:01 AM",
-    },
-    {
-      id: 3,
-      text: "Great! Want to grab coffee later?",
-      sender: "me",
-      timestamp: "10:02 AM",
-      status: "sent",
-    },
-    {
-      id: 4,
-      text: "Sure, that sounds good!",
-      sender: "friend",
-      timestamp: "10:03 AM",
-    },
-  ]);
 
   return (
     <Container
@@ -57,11 +28,7 @@ function Home() {
           setSelectedFriend={setSelectedFriend}
         />
         {/* Chat Area */}
-        <ChatArea
-          selectedFriend={selectedFriend}
-          messages={messages}
-          messageInput={messageInput}
-        />
+        <ChatArea selectedFriend={selectedFriend} />
       </Row>
     </Container>
   );

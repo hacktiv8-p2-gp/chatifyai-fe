@@ -7,6 +7,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   GithubAuthProvider,
+  signOut,
 } from "firebase/auth";
 
 const useAuthStore = create(
@@ -14,32 +15,52 @@ const useAuthStore = create(
     currentUser: null,
 
     login: async (email, password) => {
-      return await signInWithEmailAndPassword(auth, email, password);
+      const user = await signInWithEmailAndPassword(auth, email, password);
+      set((state) => {
+        state.currentUser = user;
+      });
+      return user;
     },
 
     register: async (email, password) => {
-      return await createUserWithEmailAndPassword(auth, email, password);
+      const user = await createUserWithEmailAndPassword(auth, email, password);
+      set((state) => {
+        state.currentUser = user;
+      });
+      return user;
     },
 
     loginGoogle: async () => {
       const provider = new GoogleAuthProvider();
-
-      return await signInWithPopup(auth, provider);
+      const user = await signInWithPopup(auth, provider);
+      set((state) => {
+        state.currentUser = user;
+      });
+      return user;
     },
 
     loginGithub: async () => {
       const provider = new GithubAuthProvider();
-      return await signInWithPopup(auth, provider);
-    },
-
-    setCurrentUser: (user) =>
+      const user = await signInWithPopup(auth, provider);
       set((state) => {
         state.currentUser = user;
-      }),
-    clearUser: () =>
+      });
+      return user;
+    },
+
+    setCurrentUser: (user) => {
+      set((state) => {
+        state.currentUser = user;
+      });
+      return user;
+    },
+
+    clearUser: async () => {
+      await signOut(auth);
       set((state) => {
         state.currentUser = null;
-      }),
+      });
+    },
   }))
 );
 

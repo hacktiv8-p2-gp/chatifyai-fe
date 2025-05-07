@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Form, Button, Card, Alert } from "react-bootstrap";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +14,7 @@ const loginSchema = z.object({
 });
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const { login, loginGoogle, loginGithub, setCurrentUser } = useAuthStore();
 
   const {
@@ -29,10 +30,10 @@ export default function LoginPage() {
     try {
       const { user } = await login(email, password);
 
-      console.log(await user.getIdToken());
       setCurrentUser(user);
+
+      navigate("/");
     } catch (e) {
-      console.log(e);
       if (e.message === "Firebase: Error (auth/invalid-credential).") {
         return setError("email", {
           type: "manual",
@@ -49,8 +50,10 @@ export default function LoginPage() {
   async function handleGoogleSignIn() {
     try {
       const { user } = await loginGoogle();
-      console.log(await user.getIdToken());
+
       setCurrentUser(user);
+
+      navigate("/");
     } catch (e) {
       setError("custom", {
         type: "manual",
@@ -64,6 +67,8 @@ export default function LoginPage() {
       const { user } = await loginGithub();
 
       setCurrentUser(user);
+
+      navigate("/");
     } catch (e) {
       if (
         e.message ===

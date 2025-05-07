@@ -1,12 +1,10 @@
-import React, { useState, useContext } from "react";
-import { Container, Row, Col, Button, Card, Modal } from "react-bootstrap";
+import React, { useState, useContext, useEffect } from "react";
+import { Container, Row, Col, Button, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faComments,
   faPaperPlane,
   faUser,
-  faCheck,
-  faCheckDouble,
 } from "@fortawesome/free-solid-svg-icons";
 import useAuthStore from "../data/AuthData";
 import { useNavigate } from "react-router";
@@ -14,49 +12,66 @@ import { ThemeContext } from "../Contexts/ThemeContext";
 import Contacts from "../components/Contacts";
 import AddFriend from "../components/AddFriend";
 import Header from "../components/Header";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import useAxios from "../hooks/useAxios";
 import { getAll } from "../server/ConversationServer";
-import LoadingSpinner from "../components/Spinner";
+import Chat from "../components/Chat";
+import { io } from "socket.io-client";
+import Swal from "sweetalert2";
 
+const baseURL = import.meta.env.VITE_SERVER_BASE_URL;
+const socket = io.connect(baseURL);
+
+console.log(baseURL);
 function Home() {
+  const { currentUser } = useAuthStore();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const axios = useAxios();
-  const { currentUser } = useAuthStore();
 
   const { theme } = useContext(ThemeContext);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [messageInput, setMessageInput] = useState("");
 
   const { data: messages, isLoading } = useQuery({
+    queryKey: ["messages"],
     queryFn: () => getAll(axios, selectedRoom?.roomId),
     enabled: !!selectedRoom?.roomId,
   });
 
   const handleSendMessage = () => {
-    if (!messageInput.trim()) return;
-
-    const newMessage = {
-      id: messages.length + 1,
-      text: messageInput,
-      sender: "me",
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      status: "sent",
-    };
-
-    setMessages([...messages, newMessage]);
-    setMessageInput("");
+    socket.emit("send-message", {
+      roomId: selectedRoom?.roomId,
+      message: messageInput,
+    });
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
+  async function socketFunction() {
+    if (!currentUser) return;
+
+    // Set auth token for socket connection
+    socket.auth = { token: await currentUser.getIdToken() };
+    socket.connect();
+
+    if (selectedRoom?.roomId) {
+      socket.emit("join-room", selectedRoom.roomId);
     }
-  };
+
+    // Listen for new messages
+    socket.on("receive-message", (messageData) => {
+      queryClient.invalidateQueries({ queryKey: ["messages"] });
+    });
+
+    socket.on("error", (e) => {
+      Swal.fire({
+        title: "Huh.. Error",
+        text: e.name,
+      });
+    });
+  }
+  useEffect(() => {
+    socketFunction();
+  }, [socket, selectedRoom]);
 
   return (
     <Container
@@ -131,68 +146,9 @@ function Home() {
                   <h5 className="mb-0">{selectedRoom.friend?.email}</h5>
                 </div>
               </Card.Header>
-              <Card.Body
-                style={{
-                  height: "calc(100vh - 120px)",
-                  overflowY: "auto",
-                  backgroundColor: theme.cardBackground,
-                  padding: "20px",
-                }}
-              >
-                {isLoading ? (
-                  <LoadingSpinner />
-                ) : (
-                  messages.map(
-                    ({ roomId, senderUid, message, createdAt }, id) => (
-                      <div
-                        key={id}
-                        className={`d-flex flex-column ${
-                          senderUid === currentUser.uid
-                            ? "align-items-end"
-                            : "align-items-start"
-                        }`}
-                      >
-                        <div
-                          style={{
-                            maxWidth: "70%",
-                            padding: "10px 15px",
-                            borderRadius: "15px",
-                            marginBottom: "5px",
-                            wordBreak: "break-word",
-                            backgroundColor:
-                              senderUid === currentUser.uid
-                                ? "#007bff"
-                                : theme.borderColor,
-                            color:
-                              senderUid === currentUser.uid
-                                ? "white"
-                                : theme.color,
-                            marginLeft:
-                              senderUid === currentUser.uid ? "auto" : "0",
-                            borderBottomRightRadius:
-                              senderUid === currentUser.uid ? "5px" : "15px",
-                            borderBottomLeftRadius:
-                              senderUid === currentUser.uid ? "15px" : "5px",
-                          }}
-                        >
-                          {message}
-                        </div>
-                        <div
-                          className="d-flex align-items-center"
-                          style={{
-                            fontSize: "0.75rem",
-                            color: "#adb5bd",
-                            marginTop: "2px",
-                            marginBottom: "10px",
-                          }}
-                        >
-                          <small>{createdAt}</small>
-                        </div>
-                      </div>
-                    )
-                  )
-                )}
-              </Card.Body>
+
+              <Chat messages={messages} isLoading={isLoading} />
+
               <Card.Footer
                 style={{
                   backgroundColor: theme.borderColor,
@@ -213,7 +169,6 @@ function Home() {
                     }}
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
-                    onKeyPress={handleKeyPress}
                   />
                   <Button variant="outline-light" onClick={handleSendMessage}>
                     <FontAwesomeIcon icon={faPaperPlane} />

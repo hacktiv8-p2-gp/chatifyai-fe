@@ -3,8 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun, faMoon, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { useContext } from "react";
 import { ThemeContext } from "../Contexts/ThemeContext";
+import useAuthStore from "../data/AuthData";
+import { useNavigate } from "react-router";
 
 export default function Header() {
+  const { clearUser } = useAuthStore();
+  const navigate = useNavigate();
   const { toggleTheme, theme, isDarkMode } = useContext(ThemeContext);
 
   const handleLogout = () => {

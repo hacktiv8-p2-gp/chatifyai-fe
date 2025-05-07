@@ -13,6 +13,5 @@ export async function request(axios, email) {
     email,
   });
 
-  console.log(response);
   return response.data.data;
 }

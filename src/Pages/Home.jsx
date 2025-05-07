@@ -271,20 +271,29 @@ function Home() {
                         Search
                       </Button>
                     </div>
+                  </Modal.Body>
+                  <Modal.Footer
+                    style={{
+                      backgroundColor: theme.cardBackground,
+                      color: theme.color,
+                      borderTop: `1px solid ${theme.borderColor}`,
+                      justifyContent: "center", // Untuk memastikan konten berada di tengah
+                    }}
+                  >
                     {searchResult && (
                       <div
+                        className="d-flex align-items-center justify-content-center"
                         style={{
                           backgroundColor: theme.cardBackground,
                           padding: "10px",
                           borderRadius: "8px",
                           border: `1px solid ${theme.borderColor}`,
+                          width: "100%", // Agar konten berada di tengah modal
+                          textAlign: "center",
                         }}
                       >
                         {searchResult === "not-found" ? (
-                          <div
-                            className="text-center"
-                            style={{ color: theme.color }}
-                          >
+                          <div style={{ color: theme.color }}>
                             <FontAwesomeIcon
                               icon={faUser}
                               size="3x"
@@ -293,10 +302,7 @@ function Home() {
                             <p>User not found</p>
                           </div>
                         ) : (
-                          <div
-                            className="d-flex align-items-center justify-content-between"
-                            style={{ width: "100%" }}
-                          >
+                          <div className="d-flex align-items-center justify-content-between w-100">
                             <div className="d-flex align-items-center">
                               <img
                                 src={searchResult.photo}
@@ -329,8 +335,7 @@ function Home() {
                         )}
                       </div>
                     )}
-                  </Modal.Body>
-                  <Modal.Footer></Modal.Footer>
+                  </Modal.Footer>
                 </Modal>
               </div>
             </Card.Header>
@@ -363,16 +368,6 @@ function Home() {
                       </span>
                       <div className="d-flex justify-content-between align-items-center w-100">
                         <span>{friend.name}</span>
-                        <FontAwesomeIcon
-                          icon={faCircle}
-                          style={{
-                            fontSize: "0.6rem",
-                            color:
-                              friend.status === "online"
-                                ? "#28a745"
-                                : "#6c757d",
-                          }}
-                        />
                       </div>
                     </div>
                   </ListGroup.Item>

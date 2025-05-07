@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Container, Row, Col, ListGroup, Button, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -9,12 +9,15 @@ import {
   faUser,
   faCheck,
   faCheckDouble,
+  faSun,
+  faMoon,
 } from "@fortawesome/free-solid-svg-icons";
+import { ThemeContext } from "../Contexts/ThemeContext";
 
 function Home() {
+  const { toggleTheme, theme, isDarkMode } = useContext(ThemeContext);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [messageInput, setMessageInput] = useState("");
-  const [isDark] = useState(true); // Set dark mode as default
 
   const [messages, setMessages] = useState([
     {
@@ -50,71 +53,6 @@ function Home() {
     { id: 2, name: "Jane Smith", status: "offline" },
   ];
 
-  const styles = {
-    container: {
-      height: "100vh",
-      backgroundColor: "#1a1a1a",
-    },
-    sidebar: {
-      height: "100vh",
-      borderRight: "1px solid #2d2d2d",
-      backgroundColor: "#212121",
-    },
-    chatArea: {
-      height: "calc(100vh - 120px)",
-      overflowY: "auto",
-      backgroundColor: "#212121",
-      padding: "20px",
-    },
-    header: {
-      backgroundColor: "#2d2d2d",
-      color: "#ffffff",
-    },
-    messageInput: {
-      border: "1px solid #2d2d2d",
-      borderRadius: "4px",
-      padding: "8px 12px",
-      backgroundColor: "#333333",
-      color: "#ffffff",
-    },
-    userIcon: {
-      backgroundColor: "#404040",
-      color: "#ffffff",
-      padding: "8px",
-      borderRadius: "50%",
-      marginRight: "10px",
-    },
-    messageBubble: {
-      maxWidth: "70%",
-      padding: "10px 15px",
-      borderRadius: "15px",
-      marginBottom: "5px",
-      wordBreak: "break-word",
-    },
-    sentMessage: {
-      backgroundColor: "#007bff",
-      color: "white",
-      marginLeft: "auto",
-      borderBottomRightRadius: "5px",
-    },
-    receivedMessage: {
-      backgroundColor: "#404040",
-      color: "#ffffff",
-      borderBottomLeftRadius: "5px",
-    },
-    timestamp: {
-      fontSize: "0.75rem",
-      color: "#adb5bd",
-      marginTop: "2px",
-      marginBottom: "10px",
-    },
-    messageStatus: {
-      fontSize: "0.8rem",
-      marginLeft: "5px",
-      color: "#adb5bd",
-    },
-  };
-
   const handleSendMessage = () => {
     if (!messageInput.trim()) return;
 
@@ -141,11 +79,67 @@ function Home() {
   };
 
   return (
-    <Container fluid style={styles.container}>
+    <Container
+      fluid
+      style={{
+        height: "100vh",
+        backgroundColor: "#1a1a1a",
+      }}
+    >
+      <Row
+        style={{
+          backgroundColor: theme.cardBackground,
+          padding: "10px 20px",
+          borderBottom: `1px solid ${theme.borderColor}`,
+        }}
+        className="align-items-center"
+      >
+        <Col>
+          <h4 style={{ margin: 0, color: theme.color }}>Chatify</h4>
+        </Col>
+
+        <Col className="text-end">
+          <Button
+            onClick={toggleTheme}
+            style={{
+              backgroundColor: theme.cardBackground,
+              border: `1px solid ${theme.borderColor}`,
+              color: theme.color,
+              borderRadius: "50%",
+              padding: "10px",
+              width: "40px",
+              height: "40px",
+            }}
+          >
+            <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />
+          </Button>
+        </Col>
+      </Row>
+
       <Row className="h-100">
-        <Col md={4} lg={3} className="p-0" style={styles.sidebar}>
-          <Card className="h-100 border-0" style={styles.sidebar}>
-            <Card.Header style={styles.header}>
+        <Col
+          md={4}
+          lg={3}
+          className="p-0"
+          style={{
+            height: "100vh",
+            borderRight: "1px solid #2d2d2d",
+            backgroundColor: "#212121",
+          }}
+        >
+          <Card
+            className="h-100 border-0"
+            style={{
+              height: "100vh",
+              backgroundColor: "#212121",
+            }}
+          >
+            <Card.Header
+              style={{
+                backgroundColor: "#2d2d2d",
+                color: "#ffffff",
+              }}
+            >
               <div className="d-flex justify-content-between align-items-center">
                 <h5 className="mb-0 text-light">Friends</h5>
                 <Button variant="outline-light" size="sm">
@@ -170,7 +164,15 @@ function Home() {
                     }}
                   >
                     <div className="d-flex align-items-center">
-                      <span style={styles.userIcon}>
+                      <span
+                        style={{
+                          backgroundColor: "#404040",
+                          color: "#ffffff",
+                          padding: "8px",
+                          borderRadius: "50%",
+                          marginRight: "10px",
+                        }}
+                      >
                         <FontAwesomeIcon icon={faUser} />
                       </span>
                       <div className="d-flex justify-content-between align-items-center w-100">
@@ -196,16 +198,42 @@ function Home() {
 
         <Col md={8} lg={9} className="p-0">
           {selectedFriend ? (
-            <Card className="h-100 border-0" style={styles.sidebar}>
-              <Card.Header style={styles.header}>
+            <Card
+              className="h-100 border-0"
+              style={{
+                height: "100vh",
+                backgroundColor: "#212121",
+              }}
+            >
+              <Card.Header
+                style={{
+                  backgroundColor: "#2d2d2d",
+                  color: "#ffffff",
+                }}
+              >
                 <div className="d-flex align-items-center">
-                  <span style={styles.userIcon}>
+                  <span
+                    style={{
+                      backgroundColor: "#404040",
+                      color: "#ffffff",
+                      padding: "8px",
+                      borderRadius: "50%",
+                      marginRight: "10px",
+                    }}
+                  >
                     <FontAwesomeIcon icon={faUser} />
                   </span>
                   <h5 className="mb-0">{selectedFriend.name}</h5>
                 </div>
               </Card.Header>
-              <Card.Body style={styles.chatArea}>
+              <Card.Body
+                style={{
+                  height: "calc(100vh - 120px)",
+                  overflowY: "auto",
+                  backgroundColor: "#212121",
+                  padding: "20px",
+                }}
+              >
                 {messages.map((message) => (
                   <div
                     key={message.id}
@@ -217,17 +245,31 @@ function Home() {
                   >
                     <div
                       style={{
-                        ...styles.messageBubble,
-                        ...(message.sender === "me"
-                          ? styles.sentMessage
-                          : styles.receivedMessage),
+                        maxWidth: "70%",
+                        padding: "10px 15px",
+                        borderRadius: "15px",
+                        marginBottom: "5px",
+                        wordBreak: "break-word",
+                        backgroundColor:
+                          message.sender === "me" ? "#007bff" : "#404040",
+                        color: message.sender === "me" ? "white" : "#ffffff",
+                        marginLeft: message.sender === "me" ? "auto" : "0",
+                        borderBottomRightRadius:
+                          message.sender === "me" ? "5px" : "15px",
+                        borderBottomLeftRadius:
+                          message.sender === "me" ? "15px" : "5px",
                       }}
                     >
                       {message.text}
                     </div>
                     <div
                       className="d-flex align-items-center"
-                      style={styles.timestamp}
+                      style={{
+                        fontSize: "0.75rem",
+                        color: "#adb5bd",
+                        marginTop: "2px",
+                        marginBottom: "10px",
+                      }}
                     >
                       <small>{message.timestamp}</small>
                       {message.sender === "me" && (
@@ -235,20 +277,35 @@ function Home() {
                           icon={
                             message.status === "read" ? faCheckDouble : faCheck
                           }
-                          style={styles.messageStatus}
+                          style={{
+                            fontSize: "0.8rem",
+                            marginLeft: "5px",
+                            color: "#adb5bd",
+                          }}
                         />
                       )}
                     </div>
                   </div>
                 ))}
               </Card.Body>
-              <Card.Footer style={styles.header}>
+              <Card.Footer
+                style={{
+                  backgroundColor: "#2d2d2d",
+                  color: "#ffffff",
+                }}
+              >
                 <div className="d-flex">
                   <input
                     type="text"
-                    className="form-control me-2 bg-dark text-light"
+                    className="form-control me-2"
                     placeholder="Type a message..."
-                    style={styles.messageInput}
+                    style={{
+                      border: "1px solid #2d2d2d",
+                      borderRadius: "4px",
+                      padding: "8px 12px",
+                      backgroundColor: "#333333",
+                      color: "#ffffff",
+                    }}
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
                     onKeyPress={handleKeyPress}
@@ -262,7 +319,9 @@ function Home() {
           ) : (
             <div
               className="h-100 d-flex align-items-center justify-content-center"
-              style={{ color: "#adb5bd" }}
+              style={{
+                color: "#adb5bd",
+              }}
             >
               <FontAwesomeIcon icon={faComments} className="me-2" />
               Select a friend to start chatting

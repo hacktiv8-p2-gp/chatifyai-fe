@@ -13,7 +13,7 @@ export default function AddFriend() {
     <div className="d-flex justify-content-between align-items-center">
       <h5 className="mb-0">Friends</h5>
       <Button
-        variant="outline-light"
+        variant={theme.variant}
         size="sm"
         style={{
           color: theme.color,

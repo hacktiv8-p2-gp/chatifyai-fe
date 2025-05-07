@@ -23,7 +23,7 @@ export default function Contacts({ setSelectedRoom }) {
       <ListGroup variant="flush">
         {isLoading ? (
           <LoadingSpinner />
-        ) : (
+        ) : friends && friends.length > 0 ? (
           friends.map((friend) => (
             <ListGroup.Item
               key={friend.roomId}
@@ -54,6 +54,8 @@ export default function Contacts({ setSelectedRoom }) {
               </div>
             </ListGroup.Item>
           ))
+        ) : (
+          <div className="text-center p-3">No contacts found</div> // Tampilkan pesan jika friends kosong
         )}
       </ListGroup>
     </Card.Body>

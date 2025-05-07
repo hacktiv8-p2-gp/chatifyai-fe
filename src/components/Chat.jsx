@@ -20,7 +20,7 @@ export default function Chat({ messages, isLoading }) {
     >
       {isLoading ? (
         <LoadingSpinner />
-      ) : (
+      ) : Array.isArray(messages) ? (
         messages.map(({ senderUid, message, createdAt }, id) => (
           <div
             key={id}
@@ -62,6 +62,8 @@ export default function Chat({ messages, isLoading }) {
             </div>
           </div>
         ))
+      ) : (
+        <p>No messages available</p>
       )}
     </Card.Body>
   );

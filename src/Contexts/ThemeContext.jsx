@@ -19,6 +19,7 @@ export const ThemeProvider = ({ children }) => {
         borderColor: "#2d2d2d",
         inputBackground: "#333333",
         inputColor: "#ffffff",
+        variant: "outline-dark",
       }
     : {
         background: "#f8f9fa",
@@ -27,6 +28,7 @@ export const ThemeProvider = ({ children }) => {
         borderColor: "#dee2e6",
         inputBackground: "#ffffff",
         inputColor: "#212529",
+        variant: "outline-light",
       };
 
   return (

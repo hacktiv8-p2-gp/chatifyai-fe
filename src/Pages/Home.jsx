@@ -23,7 +23,6 @@ import Swal from "sweetalert2";
 const baseURL = import.meta.env.VITE_SERVER_BASE_URL;
 const socket = io.connect(baseURL);
 
-console.log(baseURL);
 function Home() {
   const { currentUser } = useAuthStore();
   const queryClient = useQueryClient();
@@ -116,12 +115,7 @@ function Home() {
     >
       <Header />
 
-      <Row
-        className="h-100"
-        style={{
-          overflow: "hidden", // Mencegah overflow
-        }}
-      >
+      <Row className="h-100">
         {/* Sidebar */}
         <Col
           md={4}

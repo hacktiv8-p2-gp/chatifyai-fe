@@ -4,7 +4,6 @@ export async function getAll(axios) {
 }
 
 export async function get(axios, email) {
-  console.log(email);
   const response = await axios.get(`/api/friends/${email}`);
   // console.log(response);
   return response.data.data;
@@ -18,6 +17,6 @@ export async function request(axios, email) {
 }
 
 export const deleteFriend = async (axios, roomId) => {
-  const response = axios.delete(`/api/friends/delete/${roomId}`);
+  const response = await axios.delete(`/api/friends/delete/${roomId}`);
   return response.data;
 };

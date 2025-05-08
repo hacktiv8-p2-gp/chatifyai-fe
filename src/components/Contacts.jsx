@@ -8,6 +8,7 @@ import useAxios from "../hooks/useAxios";
 import { getAll } from "../server/FriendServer";
 import LoadingSpinner from "./Spinner";
 import { deleteFriend } from "../server/FriendServer"; // Import fungsi deleteFriend
+import Swal from "sweetalert2";
 
 export default function Contacts({ setSelectedRoom }) {
   const axios = useAxios();
@@ -23,15 +24,25 @@ export default function Contacts({ setSelectedRoom }) {
   const mutation = useMutation({
     mutationFn: (friendId) => deleteFriend(axios, friendId),
     onSuccess: () => {
-      queryClient.invalidateQueries(["contacts"]); // Refresh daftar teman setelah penghapusan
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
+
       setSelectedRoom(null);
     },
   });
-
   const handleDelete = (friendId) => {
-    if (window.confirm("Are you sure you want to delete this friend?")) {
-      mutation.mutate(friendId);
-    }
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        mutation.mutate(friendId);
+      }
+    });
   };
 
   return (

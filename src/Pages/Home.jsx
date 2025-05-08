@@ -40,24 +40,9 @@ function Home() {
   });
 
   const handleSendMessage = () => {
-    if (!messageInput.trim()) {
-      Swal.fire({
-        icon: "warning",
-        title: "Empty Message",
-        text: "Please type a message before sending.",
-      });
-      return;
-    }
-
     socket.emit("send-message", {
       roomId: selectedRoom?.roomId,
       message: messageInput,
-    });
-
-    Swal.fire({
-      icon: "success",
-      title: "Message Sent",
-      text: "Your message has been sent successfully.",
     });
 
     setMessageInput("");
@@ -106,13 +91,9 @@ function Home() {
         message: messageInput,
         roomId: selectedRoom.roomId,
       });
-      console.log(response);
 
-      Swal.fire({
-        icon: "success",
-        title: "Analysis Result",
-        text: response.data.result,
-      });
+      const replaceInput = response.data.message;
+      setMessageInput(replaceInput);
     } catch (error) {
       Swal.fire({
         icon: "error",

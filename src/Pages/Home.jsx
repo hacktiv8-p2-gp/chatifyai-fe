@@ -5,6 +5,7 @@ import {
   faComments,
   faPaperPlane,
   faUser,
+  faBrain,
 } from "@fortawesome/free-solid-svg-icons";
 import useAuthStore from "../data/AuthData";
 import { useNavigate } from "react-router";
@@ -26,7 +27,6 @@ console.log(baseURL);
 function Home() {
   const { currentUser } = useAuthStore();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const axios = useAxios();
 
   const { theme } = useContext(ThemeContext);
@@ -34,16 +34,33 @@ function Home() {
   const [messageInput, setMessageInput] = useState("");
 
   const { data: messages, isLoading } = useQuery({
-    queryKey: ["messages"],
+    queryKey: ["messages", selectedRoom?.roomId],
     queryFn: () => getAll(axios, selectedRoom?.roomId),
     enabled: !!selectedRoom?.roomId,
   });
 
   const handleSendMessage = () => {
+    if (!messageInput.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Empty Message",
+        text: "Please type a message before sending.",
+      });
+      return;
+    }
+
     socket.emit("send-message", {
       roomId: selectedRoom?.roomId,
       message: messageInput,
     });
+
+    Swal.fire({
+      icon: "success",
+      title: "Message Sent",
+      text: "Your message has been sent successfully.",
+    });
+
+    setMessageInput("");
   };
 
   async function socketFunction() {
@@ -72,6 +89,38 @@ function Home() {
   useEffect(() => {
     socketFunction();
   }, [socket, selectedRoom]);
+
+  const handleAnalyzeChat = async () => {
+    if (!messageInput.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Empty Input",
+        text: "Please type a message before analyzing.",
+      });
+      return;
+    }
+
+    try {
+      console.log("This is client side");
+      const response = await axios.post("/api/conversations/analyze-chat", {
+        message: messageInput,
+        roomId: selectedRoom.roomId,
+      });
+      console.log(response);
+
+      Swal.fire({
+        icon: "success",
+        title: "Analysis Result",
+        text: response.data.result,
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Analysis Failed",
+        text: error.response?.data?.message || "Something went wrong.",
+      });
+    }
+  };
 
   return (
     <Container
@@ -182,7 +231,28 @@ function Home() {
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
                   />
-                  <Button variant="outline-light" onClick={handleSendMessage}>
+                  <Button
+                    variant="outline-info"
+                    className="ms-2"
+                    onClick={handleAnalyzeChat}
+                    style={{
+                      backgroundColor: theme.buttonBackground,
+                      color: theme.buttonColor,
+                      border: `1px solid ${theme.borderColor}`,
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faBrain} />
+                  </Button>
+                  <Button
+                    variant="outline-light"
+                    className="ms-3"
+                    onClick={handleSendMessage}
+                    style={{
+                      backgroundColor: theme.buttonBackground,
+                      color: theme.buttonColor,
+                      border: `1px solid ${theme.borderColor}`,
+                    }}
+                  >
                     <FontAwesomeIcon icon={faPaperPlane} />
                   </Button>
                 </div>
